@@ -17,13 +17,11 @@
       --text-primary: #ffffff;
       --text-secondary: #b8b8d8;
     }
-
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
     }
-
     body {
       font-family: 'Kanit', sans-serif;
       background: linear-gradient(180deg, #0a0a18 0%, #0f0f1f 60%, #081018 100%);
@@ -35,7 +33,6 @@
       position: relative;
       overflow: hidden;
     }
-
     body::before {
       content: "";
       position: absolute;
@@ -44,7 +41,6 @@
                   radial-gradient(circle at 80% 90%, rgba(0, 240, 255, 0.1), transparent 40%);
       z-index: -1;
     }
-
     .dashboard {
       width: 95%;
       max-width: 400px;
@@ -54,7 +50,6 @@
       backdrop-filter: blur(10px);
       box-shadow: 0 0 16px rgba(0, 240, 255, 0.08), inset 0 0 0 1px rgba(255,255,255,0.03);
     }
-
     .dashboard-header {
       display: flex;
       justify-content: space-between;
@@ -63,7 +58,6 @@
       padding-bottom: 6px;
       margin-bottom: 16px;
     }
-
     .dashboard-header .title {
       font-family: 'Orbitron', sans-serif;
       font-size: 0.75rem;
@@ -71,19 +65,16 @@
       text-transform: uppercase;
       color: var(--primary);
     }
-
     .dashboard-header .timestamp {
       font-family: 'Orbitron', sans-serif;
       font-size: 0.65rem;
       color: var(--text-secondary);
     }
-
     .dashboard-content {
       display: flex;
       flex-direction: row;
       gap: 12px;
     }
-
     .stats-panel {
       background: rgba(15, 15, 30, 0.8);
       border-radius: 10px;
@@ -92,21 +83,18 @@
       flex: 1;
       box-shadow: inset 0 0 0 1px rgba(255,255,255,0.03);
     }
-
     .panel-title {
       font-family: 'Orbitron', sans-serif;
       font-size: 0.7rem;
       color: var(--text-secondary);
       margin-bottom: 10px;
     }
-
     .number-visualization {
       position: relative;
       width: 75px;
       height: 75px;
       margin: auto;
     }
-
     .number-circle {
       width: 100%;
       height: 100%;
@@ -121,7 +109,6 @@
       font-weight: 700;
       color: var(--primary);
     }
-
     .number-rings {
       position: absolute;
       top: 0; left: 0;
@@ -133,15 +120,12 @@
       border-bottom-color: var(--accent);
       animation: rotate 8s linear infinite;
     }
-
     @keyframes rotate {
       100% { transform: rotate(360deg); }
     }
-
     .prediction-container {
       margin-top: 10px;
     }
-
     .prediction-value {
       font-family: 'Orbitron', sans-serif;
       font-size: 1rem;
@@ -152,26 +136,21 @@
       text-transform: uppercase;
       display: inline-block;
     }
-
     .big {
       background: linear-gradient(135deg, var(--primary), #0066ff);
       box-shadow: 0 0 10px rgba(0,240,255,0.25);
     }
-
     .small {
       background: linear-gradient(135deg, var(--accent), #cc0066);
       box-shadow: 0 0 10px rgba(255,0,170,0.25);
     }
-
     @media (max-width: 360px) {
       .dashboard-header .title {
         font-size: 0.65rem;
       }
-
       .number-circle {
         font-size: 1.5rem;
       }
-
       .prediction-value {
         font-size: 0.9rem;
         padding: 5px 12px;
@@ -185,7 +164,6 @@
       <div class="title">PREMIUM PREDICTION SYSTEM</div>
       <div class="timestamp" id="timestamp">--:--:--</div>
     </div>
-
     <div class="dashboard-content">
       <div class="stats-panel">
         <div class="panel-title">Current Number</div>
@@ -194,7 +172,6 @@
           <div class="number-circle" id="number">0</div>
         </div>
       </div>
-
       <div class="stats-panel">
         <div class="panel-title">Next Prediction</div>
         <div class="prediction-container">
@@ -215,8 +192,16 @@
     const labelEl = document.getElementById("label");
     const timeEl = document.getElementById("timestamp");
 
-    const big = [5,6,7,8,9];
-    const small = [0,1,2,3,4];
+    const big = [5, 6, 7, 8, 9];
+    const small = [0, 1, 2, 3, 4];
+    let currentPeriod = "";
+
+    function getCurrentPeriod() {
+      const now = new Date();
+      const yyyyMMdd = now.toISOString().split("T")[0].replace(/-/g, "");
+      const totalMinutes = now.getUTCHours() * 60 + now.getUTCMinutes();
+      return `${yyyyMMdd}1000${10001 + totalMinutes}`;
+    }
 
     function updateUI(num, label) {
       numberEl.textContent = num;
@@ -227,7 +212,7 @@
     function randomPrediction() {
       const isBig = Math.random() < 0.5;
       const label = isBig ? "BIG" : "SMALL";
-      const number = isBig ? big[Math.floor(Math.random()*big.length)] : small[Math.floor(Math.random()*small.length)];
+      const number = isBig ? big[Math.floor(Math.random() * big.length)] : small[Math.floor(Math.random() * small.length)];
       updateUI(number, label);
     }
 
@@ -236,28 +221,32 @@
       timeEl.textContent = now.toLocaleTimeString();
     }
 
-    db.ref("prediction").on("value", snap => {
-      const data = snap.val();
-      if (!data) return;
+    function fetchPredictionIfPeriodChanged() {
+      const newPeriod = getCurrentPeriod();
+      if (newPeriod === currentPeriod) return; // Period unchanged
+      currentPeriod = newPeriod;
 
-      if (data.mode === "manual" && data.number && data.label) {
-        updateUI(data.number, data.label);
-      } else {
-        randomPrediction();
-      }
-    });
-
-    setInterval(() => {
       db.ref("prediction").once("value").then(snap => {
         const data = snap.val();
-        if (!data || data.mode !== "manual") {
+        if (!data) return;
+
+        if (data.mode === "manual" && data.number && data.label) {
+          updateUI(data.number, data.label);
+        } else {
           randomPrediction();
         }
       });
-      updateTime();
-    }, 60000);
+    }
 
+    // Initial fetch
     updateTime();
+    fetchPredictionIfPeriodChanged();
+
+    // Set interval every second
+    setInterval(() => {
+      updateTime();
+      fetchPredictionIfPeriodChanged();
+    }, 1000);
   </script>
 </body>
 </html>
