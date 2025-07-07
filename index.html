@@ -195,11 +195,19 @@
     const big = [5, 6, 7, 8, 9];
     const small = [0, 1, 2, 3, 4];
     let currentPeriod = "";
+    let lastResult = null;
 
     function getCurrentPeriod() {
       const now = new Date();
       const yyyyMMdd = now.toISOString().split("T")[0].replace(/-/g, "");
-      const totalMinutes = now.getUTCHours() * 60 + now.getUTCMinutes();
+
+      const localOffset = now.getTimezoneOffset();
+      const localTime = new Date(now.getTime() - localOffset * 60000);
+
+      const hours = localTime.getHours();
+      const minutes = localTime.getMinutes();
+      const totalMinutes = hours * 60 + minutes;
+
       return `${yyyyMMdd}1000${10001 + totalMinutes}`;
     }
 
@@ -213,6 +221,7 @@
       const isBig = Math.random() < 0.5;
       const label = isBig ? "BIG" : "SMALL";
       const number = isBig ? big[Math.floor(Math.random() * big.length)] : small[Math.floor(Math.random() * small.length)];
+      lastResult = { number, label };
       updateUI(number, label);
     }
 
@@ -223,14 +232,19 @@
 
     function fetchPredictionIfPeriodChanged() {
       const newPeriod = getCurrentPeriod();
-      if (newPeriod === currentPeriod) return; // Period unchanged
+      if (newPeriod === currentPeriod && lastResult) {
+        updateUI(lastResult.number, lastResult.label);
+        return;
+      }
+
       currentPeriod = newPeriod;
 
       db.ref("prediction").once("value").then(snap => {
         const data = snap.val();
         if (!data) return;
 
-        if (data.mode === "manual" && data.number && data.label) {
+        if (data.mode === "manual" && data.number !== undefined && data.label) {
+          lastResult = { number: data.number, label: data.label };
           updateUI(data.number, data.label);
         } else {
           randomPrediction();
@@ -238,15 +252,15 @@
       });
     }
 
-    // Initial fetch
+    // Initial
     updateTime();
     fetchPredictionIfPeriodChanged();
 
-    // Set interval every second
+    // Every second
     setInterval(() => {
       updateTime();
       fetchPredictionIfPeriodChanged();
     }, 1000);
   </script>
 </body>
-</html>
+  </html>
