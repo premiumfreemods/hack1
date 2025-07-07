@@ -29,10 +29,9 @@
       background: linear-gradient(180deg, #0a0a18 0%, #0f0f1f 60%, #081018 100%);
       color: var(--text-primary);
       height: 100vh;
-      width: 100%;
       display: flex;
       align-items: center;
-      justify-content: center; /* <-- center me le aaya */
+      justify-content: center;
       position: relative;
       overflow: hidden;
     }
@@ -48,12 +47,12 @@
 
     .dashboard {
       width: 95%;
-      max-width: 420px;
-      padding: 18px;
-      border-radius: 16px;
+      max-width: 400px;
+      padding: 14px;
+      border-radius: 14px;
       background: var(--bg-panel);
-      backdrop-filter: blur(12px);
-      box-shadow: 0 0 20px rgba(0, 240, 255, 0.08), inset 0 0 0 1px rgba(255,255,255,0.04);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 0 16px rgba(0, 240, 255, 0.08), inset 0 0 0 1px rgba(255,255,255,0.03);
     }
 
     .dashboard-header {
@@ -61,34 +60,34 @@
       justify-content: space-between;
       align-items: center;
       border-bottom: 1px solid rgba(255,255,255,0.08);
-      padding-bottom: 8px;
-      margin-bottom: 20px;
+      padding-bottom: 6px;
+      margin-bottom: 16px;
     }
 
     .dashboard-header .title {
       font-family: 'Orbitron', sans-serif;
-      font-size: 0.9rem;
-      letter-spacing: 1.5px;
+      font-size: 0.75rem;
+      letter-spacing: 1px;
       text-transform: uppercase;
       color: var(--primary);
     }
 
     .dashboard-header .timestamp {
       font-family: 'Orbitron', sans-serif;
-      font-size: 0.75rem;
+      font-size: 0.65rem;
       color: var(--text-secondary);
     }
 
     .dashboard-content {
       display: flex;
       flex-direction: row;
-      gap: 16px;
+      gap: 12px;
     }
 
     .stats-panel {
       background: rgba(15, 15, 30, 0.8);
-      border-radius: 12px;
-      padding: 20px 10px;
+      border-radius: 10px;
+      padding: 12px 6px;
       text-align: center;
       flex: 1;
       box-shadow: inset 0 0 0 1px rgba(255,255,255,0.03);
@@ -96,15 +95,15 @@
 
     .panel-title {
       font-family: 'Orbitron', sans-serif;
-      font-size: 0.8rem;
+      font-size: 0.7rem;
       color: var(--text-secondary);
-      margin-bottom: 12px;
+      margin-bottom: 10px;
     }
 
     .number-visualization {
       position: relative;
-      width: 100px;
-      height: 100px;
+      width: 75px;
+      height: 75px;
       margin: auto;
     }
 
@@ -114,11 +113,11 @@
       border-radius: 50%;
       background: rgba(0, 0, 0, 0.25);
       border: 2px solid rgba(0,240,255,0.2);
-      box-shadow: inset 0 0 15px rgba(0,240,255,0.2);
+      box-shadow: inset 0 0 12px rgba(0,240,255,0.2);
       display: flex;
       justify-content: center;
       align-items: center;
-      font-size: 2.5rem;
+      font-size: 2rem;
       font-weight: 700;
       color: var(--primary);
     }
@@ -140,33 +139,47 @@
     }
 
     .prediction-container {
-      margin-top: 12px;
+      margin-top: 10px;
     }
 
     .prediction-value {
       font-family: 'Orbitron', sans-serif;
-      font-size: 1.2rem;
-      font-weight: 700;
-      padding: 8px 20px;
-      border-radius: 40px;
-      letter-spacing: 1px;
+      font-size: 1rem;
+      font-weight: 600;
+      padding: 6px 16px;
+      border-radius: 30px;
+      letter-spacing: 0.5px;
       text-transform: uppercase;
       display: inline-block;
     }
 
     .big {
       background: linear-gradient(135deg, var(--primary), #0066ff);
-      box-shadow: 0 0 12px rgba(0,240,255,0.25);
+      box-shadow: 0 0 10px rgba(0,240,255,0.25);
     }
 
     .small {
       background: linear-gradient(135deg, var(--accent), #cc0066);
-      box-shadow: 0 0 12px rgba(255,0,170,0.25);
+      box-shadow: 0 0 10px rgba(255,0,170,0.25);
+    }
+
+    @media (max-width: 360px) {
+      .dashboard-header .title {
+        font-size: 0.65rem;
+      }
+
+      .number-circle {
+        font-size: 1.5rem;
+      }
+
+      .prediction-value {
+        font-size: 0.9rem;
+        padding: 5px 12px;
+      }
     }
   </style>
 </head>
 <body>
-
   <div class="dashboard">
     <div class="dashboard-header">
       <div class="title">PREMIUM PREDICTION SYSTEM</div>
